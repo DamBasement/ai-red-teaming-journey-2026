@@ -1,15 +1,16 @@
 """
-Agente multi-step costruito con LangGraph, nodo per nodo.
+Multi-step agent built with LangGraph, node by node.
  
-Flusso:
-  utente -> [agent] -> decide se chiamare un tool -> [tools] -> torna a [agent]
-                     -> se non serve altro tool -> FINE
+Flow:
+  user -> [agent] -> decides whether to call a tool -> [tools] -> back to [agent]
+                   -> if no more tools are needed -> END
  
-Questo è il pattern "ReAct" (Reason + Act) fatto a mano.
-Capire questo grafo è la base per capire DOVE un attaccante può inserirsi:
-- nell'input utente (prompt injection diretta)
-- nel contenuto letto dal tool read_file (prompt injection indiretta)
-- nell'output del tool che torna al modello (data poisoning del contesto)
+This is the "ReAct" pattern (Reason + Act) built by hand.
+Understanding this graph is the foundation for understanding WHERE an
+attacker can insert themselves:
+- in the user input (direct prompt injection)
+- in the content read by the read_file tool (indirect prompt injection)
+- in the tool output that goes back to the model (context poisoning)
 """
  
 from typing import Annotated, TypedDict
@@ -21,57 +22,57 @@ from langgraph.prebuilt import ToolNode
  
 from tools import ALL_TOOLS
  
-load_dotenv()  # carica ANTHROPIC_API_KEY dal file .env, se presente
+load_dotenv()  # loads ANTHROPIC_API_KEY from the .env file, if present
  
  
-# --- 1. Definizione dello stato del grafo ---
+# --- 1. Graph state definition ---
 class AgentState(TypedDict):
-    # `add_messages` fa in modo che i nuovi messaggi si accumulino
-    # invece di sovrascrivere quelli precedenti
+    # `add_messages` makes new messages accumulate
+    # instead of overwriting the previous ones
     messages: Annotated[list, add_messages]
-    # Contatore di sicurezza: quante volte il nodo "agent" è stato eseguito
+    # Safety counter: how many times the "agent" node has run
     step_count: int
  
  
-# Numero massimo di cicli agent->tools consentiti prima di forzare lo stop.
-# Senza questo limite, un contenuto malevolo letto da un tool potrebbe in
-# teoria indurre il modello a richiedere tool call all'infinito.
+# Maximum number of agent->tools cycles allowed before forcing a stop.
+# Without this limit, malicious content read by a tool could in theory
+# induce the model to request tool calls indefinitely.
 MAX_STEPS = 6
  
  
-# --- 2. Modello con i tool "agganciati" ---
+# --- 2. Model with tools "bound" to it ---
 llm = ChatAnthropic(model="claude-sonnet-4-6", temperature=0)
 llm_with_tools = llm.bind_tools(ALL_TOOLS)
  
  
-# --- 3. Nodo "agent": il modello ragiona e decide cosa fare ---
+# --- 3. "agent" node: the model reasons and decides what to do ---
 def agent_node(state: AgentState) -> AgentState:
     response = llm_with_tools.invoke(state["messages"])
     current_steps = state.get("step_count", 0)
     return {"messages": [response], "step_count": current_steps + 1}
  
  
-# --- 4. Nodo "tools": esegue i tool richiesti dal modello ---
+# --- 4. "tools" node: executes the tools requested by the model ---
 tool_node = ToolNode(ALL_TOOLS)
  
  
-# --- 5. Logica di instradamento: continuare o fermarsi? ---
+# --- 5. Routing logic: continue or stop? ---
 def should_continue(state: AgentState) -> str:
-    # Circuit breaker: se abbiamo superato il numero massimo di cicli,
-    # fermiamo l'agente indipendentemente da cosa vorrebbe fare il modello.
+    # Circuit breaker: if we've exceeded the maximum number of cycles,
+    # stop the agent regardless of what the model wants to do.
     if state.get("step_count", 0) >= MAX_STEPS:
-        print(f"\n⚠️  STOP FORZATO: raggiunto il limite di {MAX_STEPS} step.\n")
+        print(f"\n⚠️  FORCED STOP: reached the limit of {MAX_STEPS} steps.\n")
         return END
  
     last_message = state["messages"][-1]
-    # Se il modello ha chiesto di usare un tool, andiamo al nodo tools
+    # If the model requested a tool, go to the tools node
     if getattr(last_message, "tool_calls", None):
         return "tools"
-    # Altrimenti abbiamo finito
+    # Otherwise we're done
     return END
  
  
-# --- 6. Costruzione del grafo ---
+# --- 6. Graph construction ---
 def build_graph():
     graph = StateGraph(AgentState)
  
@@ -80,14 +81,14 @@ def build_graph():
  
     graph.set_entry_point("agent")
  
-    # Dopo l'agente, decidi se andare ai tool o finire
+    # After the agent, decide whether to go to tools or finish
     graph.add_conditional_edges("agent", should_continue, {
         "tools": "tools",
         END: END,
     })
  
-    # Dopo aver eseguito i tool, torna sempre all'agente
-    # (questo è il ciclo che rende l'agente "multi-step")
+    # After running the tools, always go back to the agent
+    # (this is the loop that makes the agent "multi-step")
     graph.add_edge("tools", "agent")
  
     return graph.compile()
@@ -97,17 +98,17 @@ if __name__ == "__main__":
     app = build_graph()
  
     system_prompt = (
-        "Sei un assistente che analizza report di vendita. "
-        "Hai accesso a tool per leggere file, contare parole, estrarre numeri "
-        "e convertire valute con tassi di cambio reali. "
-        "Usa i tool necessari, poi produci un riepilogo chiaro in italiano."
+        "You are an assistant that analyzes sales reports. "
+        "You have access to tools for reading files, counting words, extracting numbers, "
+        "and converting currencies using real exchange rates. "
+        "Use the tools you need, then produce a clear summary in English."
     )
  
     user_task = (
-        "Leggi il file sample_data/report.txt, poi dimmi quante parole contiene "
-        "e quali numeri principali riporta. Converti anche il ricavo totale "
-        "(somma dei tre prodotti) da EUR a USD usando il tasso di cambio reale. "
-        "Concludi con un riepilogo di 2 righe."
+        "Read the file sample_data/report.txt, then tell me how many words it contains "
+        "and what the main numbers are. Also convert the total revenue "
+        "(sum of the three products) from EUR to USD using the real exchange rate. "
+        "Conclude with a 2-line summary."
     )
  
     result = app.invoke({
@@ -118,11 +119,11 @@ if __name__ == "__main__":
         "step_count": 0,
     }, config={"recursion_limit": 50})
  
-    print("\n=== CONVERSAZIONE COMPLETA (per capire ogni step) ===\n")
+    print("\n=== FULL CONVERSATION (to understand each step) ===\n")
     for msg in result["messages"]:
         role = msg.__class__.__name__
         content = msg.content if isinstance(msg.content, str) else msg.content
         print(f"[{role}] {content}\n")
  
-    print("=== RISPOSTA FINALE ===")
+    print("=== FINAL RESPONSE ===")
     print(result["messages"][-1].content)
