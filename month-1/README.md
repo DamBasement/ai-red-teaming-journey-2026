@@ -9,7 +9,7 @@ similar systems.
 
 The first output of a month-by-month journey toward advanced proficiency in
 AI red teaming (agents, benchmarks, guardrails), July–December 2026.
-Full response for the month: [`blog-post-mese1.md`](./blog-post-mese1.md).
+Full response for the month: [`blog-post-mese-1.md`](./blog-post-mese-1.md).
 
 ## Setup
 
@@ -70,7 +70,7 @@ An honest conclusion: two manual tests do not prove the system is
 secure—they only demonstrate that those two specific techniques did not
 work on this model, at this moment. Systematic, large-scale testing
 (hundreds of variants, measured success rates) is planned for
-later stages. Full details in [`blog-post-mese1.md`](./blog-post-mese1.md).
+later stages. Full details in [`blog-post-mese-1.md`](./blog-post-mese-1.md).
 
 ## Known, unexploited vulnerabilities (intentional, for future months)
 
