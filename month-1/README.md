@@ -29,7 +29,7 @@ agent-month1/
 ├── requirements.txt
 ├── sample_data/
 │   └── report.txt         # sample data read by the agent
-└── blog-post-month1.md    # full technical report for the month
+└── blog-post-month-1.md    # full technical report for the month
 ```
 
 ## What the agent does
