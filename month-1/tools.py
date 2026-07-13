@@ -1,64 +1,64 @@
 """
-Tool disponibili per l'agente.
-
-Nota per il red teaming (Mese 3): questi tool sono scritti in modo VOLUTAMENTE
-semplice, senza sanitizzazione dell'input, per poterli poi rompere di
-proposito. Non usare questo pattern in produzione.
+Tools available to the agent.
+ 
+Note for red teaming (Month 3): these tools are DELIBERATELY written
+in a simple way, with no input sanitization, so they can later be
+broken on purpose. Do not use this pattern in production.
 """
-
+ 
 import os
 import requests
 from langchain_core.tools import tool
-
-
+ 
+ 
 @tool
 def read_file(filepath: str) -> str:
-    """Legge il contenuto di un file di testo dato il suo percorso.
-
+    """Reads the content of a text file given its path.
+ 
     Args:
-        filepath: percorso del file da leggere.
+        filepath: path of the file to read.
     """
     if not os.path.exists(filepath):
-        return f"ERRORE: il file '{filepath}' non esiste."
+        return f"ERROR: file '{filepath}' does not exist."
     with open(filepath, "r", encoding="utf-8") as f:
         return f.read()
-
-
+ 
+ 
 @tool
 def word_count(text: str) -> str:
-    """Conta parole, righe e caratteri in un testo.
-
+    """Counts words, lines, and characters in a text.
+ 
     Args:
-        text: il testo da analizzare.
+        text: the text to analyze.
     """
     words = len(text.split())
     lines = len(text.splitlines())
     chars = len(text)
-    return f"Parole: {words}, Righe: {lines}, Caratteri: {chars}"
-
-
+    return f"Words: {words}, Lines: {lines}, Characters: {chars}"
+ 
+ 
 @tool
 def extract_numbers(text: str) -> str:
-    """Estrae tutti i numeri presenti in un testo.
-
+    """Extracts all numbers present in a text.
+ 
     Args:
-        text: il testo da cui estrarre i numeri.
+        text: the text to extract numbers from.
     """
     import re
     numbers = re.findall(r"\d+", text)
     if not numbers:
-        return "Nessun numero trovato."
-    return f"Numeri trovati: {', '.join(numbers)}"
-
-
+        return "No numbers found."
+    return f"Numbers found: {', '.join(numbers)}"
+ 
+ 
 @tool
 def convert_currency(amount: float, from_currency: str, to_currency: str) -> str:
-    """Converte un importo da una valuta a un'altra usando tassi di cambio reali e aggiornati.
-
+    """Converts an amount from one currency to another using real, up-to-date exchange rates.
+ 
     Args:
-        amount: importo da convertire (es. 45000).
-        from_currency: codice valuta di partenza, 3 lettere (es. EUR).
-        to_currency: codice valuta di destinazione, 3 lettere (es. USD).
+        amount: amount to convert (e.g. 45000).
+        from_currency: source currency code, 3 letters (e.g. EUR).
+        to_currency: target currency code, 3 letters (e.g. USD).
     """
     url = "https://api.frankfurter.app/latest"
     params = {"amount": amount, "from": from_currency.upper(), "to": to_currency.upper()}
@@ -69,11 +69,11 @@ def convert_currency(amount: float, from_currency: str, to_currency: str) -> str
         converted = data["rates"][to_currency.upper()]
         return (
             f"{amount} {from_currency.upper()} = {converted:.2f} {to_currency.upper()} "
-            f"(tasso del {data['date']})"
+            f"(rate as of {data['date']})"
         )
     except Exception as e:
-        return f"ERRORE nella chiamata API: {e}"
-
-
-# Lista di tool esposti all'agente
+        return f"ERROR calling the API: {e}"
+ 
+ 
+# List of tools exposed to the agent
 ALL_TOOLS = [read_file, word_count, extract_numbers, convert_currency]
