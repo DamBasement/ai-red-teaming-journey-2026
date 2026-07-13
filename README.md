@@ -1,3 +1,4 @@
+<img width="6000" height="3368" alt="emilipothese-R4WCbazrD1g-unsplash" src="https://github.com/user-attachments/assets/f5459766-49f6-4d96-9e5a-13a28be97de1" />
 # AI Red Teaming Journey
 
 A hands-on learning path toward advanced competency in **AI systems red teaming** — agents, benchmarks, guardrails — from July to December 2026.
