@@ -3,4 +3,3 @@ langgraph
 langchain-anthropic
 langchain-core
 python-dotenv
-nemoguardrails
