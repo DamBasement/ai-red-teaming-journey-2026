@@ -94,7 +94,7 @@ if __name__ == "__main__":
     print("\n=== FULL CONVERSATION (to understand each step) ===\n")
     for msg in result["messages"]:
         role = msg.__class__.__name__
-        content = msg.content if isinstance(msg.content, str) else msg.content
+        content = msg.content if isinstance(msg.content, str) else str(msg.content)
         print(f"[{role}] {content}\n")
 
     print("=== FINAL RESPONSE ===")
