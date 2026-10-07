@@ -1,0 +1,23 @@
+# Input rail repurposed as a tool-content screen.
+#
+# NeMo's "self check input" flow is generic: it asks the configured LLM
+# "should this text be blocked, per the policy in the prompt?" and treats
+# whatever is passed as the user message as the thing to check. It's
+# normally wired to the user's own chat message. Here it's wired to text
+# that arrives from a tool call instead (fetch_customer_feedback), which is
+# the actual untrusted channel in this agent's threat model — the user
+# never sees or controls this text directly, and never has an initial
+# chat turn at all in the automated test harnesses.
+#
+# This is a deliberate reuse of the mechanism, not a NeMo built-in for
+# "screen tool output" — see execution_rail.py for why the native
+# tool_input/tool_output rail feature (IORails) wasn't a fit here.
+models:
+  - type: main
+    engine: anthropic
+    model: claude-sonnet-4-6
+
+rails:
+  input:
+    flows:
+      - self check input

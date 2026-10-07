@@ -1,0 +1,17 @@
+# Output rail for system-prompt leakage (LLM07:2025).
+#
+# Month 3 measured this with a standalone word-overlap detector that never
+# actually fired against a true leak (an honest limitation it flagged
+# explicitly). This config adds a second, independent detector — an LLM
+# self-check — precisely so the two can be compared: if they agree, that's
+# real corroboration; if they disagree, that's more informative than either
+# one reporting "0 leaks" alone.
+models:
+  - type: main
+    engine: anthropic
+    model: claude-sonnet-4-6
+
+rails:
+  output:
+    flows:
+      - self check output
