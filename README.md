@@ -31,9 +31,9 @@ Each monthly folder contains its own `README.md` with specific details, the code
 | Month | Period | Focus | Status |
 |---|---|---|---|
 | 1 | July | LangGraph fundamentals, tool calling, first prompt injection test | ✅ Completed |
-| 2 | August | Ambiguous tool selection, misleading docstrings | 🔜 In progress |
-| 3 | September | OWASP Top 10 for LLMs, systematic direct and indirect injection | ⏳ To do |
-| 4 | October | NVIDIA NeMo Guardrails: building rails and breaking out of them | ⏳ To do |
+| 2 | August | Ambiguous tool selection, misleading docstrings | ✅ Completed |
+| 3 | September | OWASP Top 10 for LLMs, systematic direct and indirect injection | ✅ Completed |
+| 4 | October | NVIDIA NeMo Guardrails: building rails and breaking out of them | 🔜 In progress |
 | 5 | November | Automated benchmarking: Promptfoo, Giskard, Pytest | ⏳ To do |
 | 6 | December | Adversarial Agent: multi-agent manipulation, data exfiltration | ⏳ To do |
 
