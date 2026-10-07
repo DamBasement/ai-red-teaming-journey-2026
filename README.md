@@ -2,7 +2,7 @@
 
 # AI Red Teaming Journey
 
-A hands-on learning path toward advanced competency in **AI systems red teaming** — agents, benchmarks, guardrails — from July to December 2026.
+A hands-on learning path toward advanced competency in **AI systems red teaming**, agents, benchmarks, guardrails from July to December 2026.
 
 Each month produces a working, documented project and a technical write-up describing what was built and what was discovered. The goal isn't to collect tools, but to build first, deeply understand how things work internally, and only then try to break them systematically.
 
@@ -16,12 +16,12 @@ Red teaming agentic systems requires thinking in terms of dynamic, probabilistic
 ai-red-teaming-journey/
 ├── .gitignore
 ├── README.md                          (this file)
-├── month-01-langgraph-fundamentals/    July — multi-step agent, tool calling, basic prompt injection
-├── month-02-tool-selection/            August — how an LLM chooses between ambiguous tools
-├── month-03-owasp-vulnerabilities/     September — OWASP Top 10 for LLMs, direct/indirect injection
-├── month-04-guardrails/                October — NeMo Guardrails, systematic bypass attempts
-├── month-05-benchmarking/              November — Promptfoo, Giskard, Pytest, testing at scale
-└── month-06-offensive-agency/          December — Adversarial Agent, multi-agent dynamics
+├── month-1-langgraph-fundamentals/    July — multi-step agent, tool calling, basic prompt injection
+├── month-2-tool-selection/            August — how an LLM chooses between ambiguous tools
+├── month-3-owasp-vulnerabilities/     September — OWASP Top 10 for LLMs, direct/indirect injection
+├── month-4-guardrails/                October — NeMo Guardrails, systematic bypass attempts
+├── month-5-benchmarking/              November — Promptfoo, Giskard, Pytest, testing at scale
+└── month-6-offensive-agency/          December — Adversarial Agent, multi-agent dynamics
 ```
 
 Each monthly folder contains its own `README.md` with specific details, the code, and a technical write-up (`blog-post.md`).
@@ -59,7 +59,7 @@ python agent.py
 
 ## Ethical note
 
-Some projects from October onward involve real offensive capabilities (guardrail bypass attempts, agents with access to potentially dangerous tools). All tests are conducted against agents I built myself, in local or isolated sandbox environments — never against third-party systems without explicit authorization. The same principle applies to anyone reproducing these experiments.
+Some projects from October onward involve real offensive capabilities (guardrail bypass attempts, agents with access to potentially dangerous tools). All tests are conducted against agents I built myself, in local or isolated sandbox environments, never against third-party systems without explicit authorization. The same principle applies to anyone reproducing these experiments.
 
 ## Following the full journey
 
