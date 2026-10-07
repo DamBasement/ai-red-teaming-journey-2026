@@ -1,4 +1,4 @@
-# Agent Month 4 — Guardrails (NeMo Guardrails, build then break)
+# Guardrails (NeMo Guardrails, build then break)
 
 NVIDIA NeMo Guardrails wrapped around the Month 3 customer-support agent:
 a tool-content input rail, a deterministic execution rail on the
@@ -40,7 +40,6 @@ class of bug Month 3's own harness shipped on its first attempt.
 ## Project layout
 
 ```
-agent-month4/
 ├── agent.py                       # LangGraph agent + guardrails_enabled toggle
 ├── tools.py                       # fetch_customer_feedback, write_log (raw, unchanged from Month 3)
 ├── execution_rail.py              # deterministic path-validation execution rail
